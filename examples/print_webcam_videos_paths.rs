@@ -7,6 +7,7 @@ use webgazer_dataset_reader::{DatasetReader, WebcamVideoType};
 struct Args {
     path: PathBuf,
     video_type: String,
+    index: Option<usize>,
 }
 
 fn main() {
@@ -23,7 +24,7 @@ fn main() {
 
         let video_paths = preader
             .path
-            .webcam_videos(video_type)
+            .webcam_videos(video_type, args.index)
             .unwrap();
 
         if video_paths.is_empty() {
