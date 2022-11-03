@@ -51,12 +51,12 @@ impl ParticipantPath {
             .with_extension("txt")
     }
 
-    pub fn webcam_videos(&self, video_type: WebcamVideoType, index: Option<usize>) -> io::Result<Vec<PathBuf>> {
+    pub fn webcam_videos(&self, video_type: Option<WebcamVideoType>, index: Option<usize>) -> io::Result<Vec<PathBuf>> {
         let regex = Regex::new(&format!(
             r"{}_{}_-study-{}(\s\(\d+\))?\.webm",
             self.participant_log_id,
             index.map_or(r"\d+".to_string(), |i| i.to_string()),
-            video_type.as_str()
+            video_type.map_or(r"[a-z_]+", |t| t.as_str())
         ))
         .unwrap();
 

@@ -6,18 +6,29 @@ use webgazer_dataset_reader::{DatasetReader, WebcamVideoType};
 #[derive(Parser)]
 struct Args {
     path: PathBuf,
-    video_type: String,
+    video_type: Option<String>,
     index: Option<usize>,
 }
 
 fn main() {
     let args = Args::parse();
 
-    let video_type: WebcamVideoType = args.video_type.as_str().try_into().unwrap();
+    let video_type: Option<WebcamVideoType> = args.video_type.map(|t| t.as_str().try_into().unwrap());
 
     let reader = DatasetReader::new(args.path);
 
-    let readers = reader.participant_readers().unwrap();
+    let mut readers = reader.participant_readers().unwrap();
+
+    let parse_id = |s: String| {
+        usize::from_str_radix(s.split("_").nth(1).unwrap(), 10).unwrap()
+    };
+
+    readers.sort_by(|a, b| {
+        let id1 = parse_id(a.path.participant_id().to_owned());
+        let id2 = parse_id(b.path.participant_id().to_owned());
+
+        id1.cmp(&id2)
+    });
 
     for preader in readers {
         println!("{}", preader.path.participant_id());
