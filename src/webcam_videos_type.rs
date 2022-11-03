@@ -93,6 +93,7 @@ impl From<&str> for WebcamVideoType {
             "dot_test_final_instructions" => Self::DotTestFinalInstructions,
             "dot_test_final" => Self::DotTestFinal,
             "thank_you" => Self::ThankYou,
+            _ => panic!("Unknown webcam video type name.")
         }
     }
 }
