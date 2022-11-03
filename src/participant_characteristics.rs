@@ -1,4 +1,4 @@
-use std::time;
+use std::{fs::File, io, path::Path, time};
 
 use chrono::{Date, DateTime, NaiveDate, NaiveDateTime, Utc};
 use serde::{de::Error, Deserialize, Deserializer};
@@ -80,16 +80,16 @@ pub enum PointingDevice {
     Mouse,
 }
 
-#[derive(Debug, Deserialize)]
-pub struct ParticipantCharacteristics {
-    #[serde(rename = "Participant ID")]
-    pub participant_id: String,
+pub type ParticipantId = String;
+pub type ParticipantLogId = String;
 
-    #[serde(
-        rename = "Participant Log ID",
-        deserialize_with = "deserialize_participant_log_id"
-    )]
-    pub participant_log_id: time::Duration,
+#[derive(Debug, Deserialize)]
+pub struct ParticipantCharacteristic {
+    #[serde(rename = "Participant ID")]
+    pub participant_id: ParticipantId,
+
+    #[serde(rename = "Participant Log ID")]
+    pub participant_log_id: ParticipantLogId,
 
     #[serde(rename = "Date", deserialize_with = "deserialize_date")]
     pub date: Date<Utc>,
@@ -213,17 +213,6 @@ where
     }
 }
 
-fn deserialize_participant_log_id<'de, D>(deserializer: D) -> Result<time::Duration, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    let s: &str = Deserialize::deserialize(deserializer)?;
-    match s.parse::<u64>() {
-        Ok(millis) => Ok(time::Duration::from_millis(millis)),
-        Err(err) => Err(Error::custom(err.to_string())),
-    }
-}
-
 fn deserialize_start_time_utc<'de, D>(deserializer: D) -> Result<Option<DateTime<Utc>>, D::Error>
 where
     D: Deserializer<'de>,
@@ -263,4 +252,20 @@ where
             + chrono::Duration::seconds(seconds.parse().unwrap())),
         _ => Err(Error::custom("")),
     }
+}
+
+pub fn load_participant_characteristics<P: AsRef<Path>>(
+    path: P,
+) -> io::Result<Vec<ParticipantCharacteristic>> {
+    let file = File::open(path)?;
+
+    let mut reader = csv::Reader::from_reader(file);
+
+    reader
+        .deserialize()
+        .map(|result| {
+            let record: ParticipantCharacteristic = result?;
+            Ok(record)
+        })
+        .collect()
 }
