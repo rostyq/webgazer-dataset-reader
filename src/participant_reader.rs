@@ -1,4 +1,4 @@
-use crate::{DatasetReader, ParticipantCharacteristics, ParticipantPath};
+use crate::{DatasetReader, ParticipantCharacteristic, ParticipantPath};
 
 pub struct ParticipantReader {
     pub path: ParticipantPath,
@@ -6,11 +6,11 @@ pub struct ParticipantReader {
 
 impl ParticipantReader {
     pub fn new(
-        characteristics: &ParticipantCharacteristics,
+        characteristics: &ParticipantCharacteristic,
         dataset_reader: &DatasetReader,
     ) -> Self {
         Self {
-            path: ParticipantPath::new(characteristics, dataset_reader),
+            path: ParticipantPath::from(characteristics, dataset_reader),
         }
     }
 }
