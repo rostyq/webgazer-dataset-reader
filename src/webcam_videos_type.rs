@@ -62,38 +62,40 @@ impl ToString for WebcamVideoType {
     }
 }
 
-impl From<&str> for WebcamVideoType {
-    fn from(p: &str) -> Self {
-        match p {
-            "dot_test_instructions" => Self::DotTestInstructions,
-            "dot_test" => Self::DotTest,
-            "fitts_law_instructions" => Self::FittsLawInstructions,
-            "fitts_law" => Self::FittsLaw,
-            "serp_instructions" => Self::SerpInstructions,
-            "benefits_of_running_instructions" => Self::BenefitsOfRunningInstructions,
-            "benefits_of_running" => Self::BenefitsOfRunning,
-            "benefits_of_running_writing" => Self::BenefitsOfRunningWriting,
+impl TryFrom<&str> for WebcamVideoType {
+    type Error = String;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        match value {
+            "dot_test_instructions" => Ok(Self::DotTestInstructions),
+            "dot_test" => Ok(Self::DotTest),
+            "fitts_law_instructions" => Ok(Self::FittsLawInstructions),
+            "fitts_law" => Ok(Self::FittsLaw),
+            "serp_instructions" => Ok(Self::SerpInstructions),
+            "benefits_of_running_instructions" => Ok(Self::BenefitsOfRunningInstructions),
+            "benefits_of_running" => Ok(Self::BenefitsOfRunning),
+            "benefits_of_running_writing" => Ok(Self::BenefitsOfRunningWriting),
             "educational_advantages_of_social_networking_sites_instructions" => {
-                Self::EducationalAdvantagesOfSocialNetworkingSitesInstructions
+                Ok(Self::EducationalAdvantagesOfSocialNetworkingSitesInstructions)
             }
             "educational_advantages_of_social_networking_sites" => {
-                Self::EducationalAdvantagesOfSocialNetworkingSites
+                Ok(Self::EducationalAdvantagesOfSocialNetworkingSites)
             }
             "beducational_advantages_of_social_networking_sites_writing" => {
-                Self::BeducationalAdvantagesOfSocialNetworkingSitesWriting
+                Ok(Self::BeducationalAdvantagesOfSocialNetworkingSitesWriting)
             }
             "where_to_find_morel_mushrooms_instructions" => {
-                Self::WhereToFindMorelMushroomsInstructions
+                Ok(Self::WhereToFindMorelMushroomsInstructions)
             }
-            "where_to_find_morel_mushrooms" => Self::WhereToFindMorelMushrooms,
-            "where_to_find_morel_mushrooms_writing" => Self::WhereToFindMorelMushroomsWriting,
-            "tooth_abscess_instructions" => Self::ToothAbscessInstructions,
-            "tooth_abscess" => Self::ToothAbscess,
-            "tooth_abscess_writing" => Self::ToothAbscessWriting,
-            "dot_test_final_instructions" => Self::DotTestFinalInstructions,
-            "dot_test_final" => Self::DotTestFinal,
-            "thank_you" => Self::ThankYou,
-            _ => panic!("Unknown webcam video type name.")
+            "where_to_find_morel_mushrooms" => Ok(Self::WhereToFindMorelMushrooms),
+            "where_to_find_morel_mushrooms_writing" => Ok(Self::WhereToFindMorelMushroomsWriting),
+            "tooth_abscess_instructions" => Ok(Self::ToothAbscessInstructions),
+            "tooth_abscess" => Ok(Self::ToothAbscess),
+            "tooth_abscess_writing" => Ok(Self::ToothAbscessWriting),
+            "dot_test_final_instructions" => Ok(Self::DotTestFinalInstructions),
+            "dot_test_final" => Ok(Self::DotTestFinal),
+            "thank_you" => Ok(Self::ThankYou),
+            unsupported_type_name => Err(format!("Unsupported webcam video type name: `{}`", unsupported_type_name)),
         }
     }
 }
