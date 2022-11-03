@@ -1,10 +1,9 @@
-use std::fs::File;
 use std::io;
 use std::path::PathBuf;
 
 use crate::dataset_path::DatasetPath;
-use crate::participant_characteristics::ParticipantCharacteristics;
-use crate::ParticipantReader;
+use crate::participant_characteristics::ParticipantCharacteristic;
+use crate::{ParticipantReader, load_participant_characteristics};
 
 pub struct DatasetReader {
     pub path: DatasetPath,
@@ -15,19 +14,8 @@ impl DatasetReader {
         Self { path: path.into() }
     }
 
-    pub fn participant_characteristics(&self) -> io::Result<Vec<ParticipantCharacteristics>> {
-        let p = self.path.participant_characteristics();
-        let file = File::open(p)?;
-
-        let mut reader = csv::Reader::from_reader(file);
-
-        reader
-            .deserialize()
-            .map(|result| {
-                let record: ParticipantCharacteristics = result?;
-                Ok(record)
-            })
-            .collect()
+    pub fn participant_characteristics(&self) -> io::Result<Vec<ParticipantCharacteristic>> {
+        load_participant_characteristics(self.path.participant_characteristics())
     }
 
     pub fn participant_readers(&self) -> io::Result<Vec<ParticipantReader>> {
