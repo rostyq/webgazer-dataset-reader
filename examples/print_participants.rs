@@ -13,7 +13,7 @@ fn main() {
 
     let reader = DatasetReader::new(args.path);
 
-    for participant in reader.participant_characteristics().iter() {
-        println!("{:?}", participant);
+    for participant in reader.participant_characteristics().unwrap() {
+        println!("{:#?}", participant);
     }
 }
